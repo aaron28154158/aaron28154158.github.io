@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>腰痠請趕快離開謝謝配合</title>
+    <title>此頁面會帶給小張滿滿自信</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kalnia+Glaze:wght@100..700&display=swap" rel="stylesheet">
@@ -83,14 +83,16 @@
 <body>
     <div class="container">
         <canvas id="pinkboard" class="heart"></canvas>
+        <canvas id="rotatingHeart"></canvas>
         <div class="text_box">
-            <input type="text" id="text1" placeholder="小張晚晚安祝妳有個好夢">
-            <input type="text" id="text2" placeholder="妳是最可愛最優秀最棒的">
+            <input type="text" id="text1" placeholder="張小棠晚晚安要睡飽飽唷">
+            <input type="text" id="text2" placeholder="記得每天開心快樂地微笑">
+            <input type="text" id="text2" placeholder="妳笑起來時最可愛">
         </div>
     </div>
 
     <script>
-        // 設置
+        // 原有的愛心粒子動畫代碼
         var settings = {
             particles: {
                 length: 500,
@@ -291,6 +293,53 @@
                 render();
             }, 10);
         })(document.getElementById("pinkboard"));
+
+        // 新增的旋轉愛心動畫代碼
+        const rotatingCanvas = document.getElementById('rotatingHeart');
+        const rotatingCtx = rotatingCanvas.getContext('2d');
+
+        let rotatingTime = 0;
+        const rotatingHeartImage = new Image();
+        rotatingHeartImage.src = '1.jpg';
+
+        function pointOnRotatingHeart(t) {
+            return {
+                x: 16 * Math.pow(Math.sin(t), 3),
+                y: -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))
+            };
+        }
+
+        function resizeRotatingCanvas() {
+            rotatingCanvas.width = rotatingCanvas.clientWidth;
+            rotatingCanvas.height = rotatingCanvas.clientHeight;
+        }
+
+        function drawRotatingHeart() {
+            rotatingCtx.clearRect(0, 0, rotatingCanvas.width, rotatingCanvas.height);
+
+            const centerX = rotatingCanvas.width / 2;
+            const centerY = rotatingCanvas.height / 2;
+            const scale = Math.min(rotatingCanvas.width, rotatingCanvas.height) / 40;
+
+            const point = pointOnRotatingHeart(rotatingTime);
+            const x = centerX + point.x * scale;
+            const y = centerY + point.y * scale;
+
+            rotatingCtx.save();
+            rotatingCtx.translate(x, y);
+            rotatingCtx.rotate(rotatingTime);
+            rotatingCtx.drawImage(rotatingHeartImage, -35, -35, 60, 60);
+            rotatingCtx.restore();
+
+            rotatingTime += 0.05;
+            requestAnimationFrame(drawRotatingHeart);
+        }
+
+        window.addEventListener('resize', resizeRotatingCanvas);
+        rotatingHeartImage.onload = () => {
+            resizeRotatingCanvas();
+            drawRotatingHeart();
+        };
     </script>
 </body>
 </html>
